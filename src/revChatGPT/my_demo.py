@@ -232,7 +232,7 @@ def experiment_2():
     #     f.write('')
     # start from last part
     names = set()
-    with open('./log/experiment_2.log', 'w') as f:
+    with open('./log/experiment_2.log', 'r') as f:
         for line in f:
             content = json.loads(line)
             names.add(content['name'])
