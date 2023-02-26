@@ -228,12 +228,20 @@ def experiment_2():
     email = 'shuyinouyang.jp@gmail.com'
     password = 'wanamaker670'
     # initialize the log
+    # with open('./log/experiment_2.log', 'w') as f:
+    #     f.write('')
+    # start from last part
+    names = set()
     with open('./log/experiment_2.log', 'w') as f:
-        f.write('')
+        for line in f:
+            content = json.loads(line)
+            names.add(content['name'])
     # with open('../../../alpha_code/dataset/code_contests_test.json', 'r') as f:
     with open('./tmp2/code_contests_test.json', 'r') as f:
         problem_list = json.load(f)
     for problem in problem_list:
+        if problem['name'] in names:
+            continue
         print('----------------------problem name: %s--------------------------------' % (problem['name']), flush=True)
         description = problem['description']
         test_set = problem['public_tests'] + problem['private_tests'] + problem['generated_tests']
