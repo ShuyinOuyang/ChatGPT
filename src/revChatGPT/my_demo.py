@@ -297,10 +297,86 @@ def experiment_2():
             f.write(json_str + '\n')
 
 
+def experiment_3():
+    # top5 code
+    # same window
+    # each question one window
+    email = 'shuyinouyang.jp@gmail.com'
+    password = 'wanamaker670'
+    # initialize the log
+    # with open('./log/experiment_3.log', 'w') as f:
+    #     f.write('')
+    # start from last part
+    names = set()
+    with open('./log/experiment_3.log', 'r') as f:
+        for line in f:
+            content = json.loads(line)
+            names.add(content['name'])
+    # with open('../../../alpha_code/dataset/code_contests_test.json', 'r') as f:
+    with open('./tmp2/code_contests_test.json', 'r') as f:
+        problem_list = json.load(f)
+    for problem in problem_list:
+        if problem['name'] in names:
+            continue
+        print('----------------------problem name: %s--------------------------------' % (problem['name']), flush=True)
+        description = problem['description']
+        test_set = problem['public_tests'] + problem['private_tests'] + problem['generated_tests']
+        print('Initializing chatbot')
+        chatbot = use_chatGPT(email, password)
+        print('generating code for original description', flush=True)
+        res_list_0 = []
+        while True:
+            if len(res_list_0) >= 5:
+                break
+            try:
+                code = chatGPT_code_2(chatbot, description)
+                res_0 = solution_evaluation(code, test_set)
+            except Exception as e:
+                print(e, flush=True)
+                continue
+            res = {
+                'name': problem['name'],
+                'description': description,
+                'code': code,
+                'test_case_solved': res_0,
+            }
+            res_list_0.append(res)
 
+        print('generating code for rephrased description', flush=True)
+        res_list_1 = []
+        while True:
+            if len(res_list_1) >= 5:
+                break
+            try:
+                description_rephrase = chatGPT_rephrase_2(chatbot, problem['description'])
+            except Exception as e:
+                print(e, flush=True)
+                continue
+            try:
+                code_rephrase = chatGPT_code_2(chatbot, description_rephrase)
+                res_1 = solution_evaluation(code_rephrase, test_set)
+
+            except Exception as e:
+                print(e, flush=True)
+                continue
+            res = {
+                'name': problem['name'],
+                'rephrased_description': description_rephrase,
+                'rephrased_code': code_rephrase,
+                'test_case_solved': res_1,
+            }
+            res_list_1.append(res)
+        for res in res_list_0:
+            json_str = json.dumps(res)
+            with open('./log/experiment_3.log', 'a') as f:
+                f.write(json_str + '\n')
+        for res in res_list_1:
+            json_str = json.dumps(res)
+            with open('./log/experiment_3.log', 'a') as f:
+                f.write(json_str + '\n')
 
 if __name__ == "__main__":
-    experiment_2()
+    experiment_3()
     # res_list = []
     # for _ in range(5):
     #     code, res_0 = randomness_test()
