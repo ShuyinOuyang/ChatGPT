@@ -71,6 +71,18 @@ def chatGPT_code_2(chatbot, description):
         return code[0]
     return ''
 
+def chatGPT_code_diff(chatbot, description):
+    prompt = 'Generate different Python3 solution only:\n'
+    for data in chatbot.ask(
+            prompt + description
+    ):
+        response = data["message"]
+    code_template = re.compile('```.*\n([\s\S]+?)\n```', re.M)
+    code = code_template.findall(response)
+    if len(code) > 0:
+        return code[0]
+    return ''
+
 def chatGPT_rephrase(email, password, description):
     chatbot = use_chatGPT(email, password)
     prompt = 'Rephrase the following description, and make it better to generate AC code:\n'
@@ -328,12 +340,20 @@ def experiment_3():
         while True:
             if len(res_list_0) >= 5:
                 break
-            try:
-                code = chatGPT_code_2(chatbot, description)
-                res_0 = solution_evaluation(code, test_set)
-            except Exception as e:
-                print(e, flush=True)
-                continue
+            if len(res_list_0) == 0:
+                try:
+                    code = chatGPT_code_2(chatbot, description)
+                    res_0 = solution_evaluation(code, test_set)
+                except Exception as e:
+                    print(e, flush=True)
+                    continue
+            else:
+                try:
+                    code = chatGPT_code_diff(chatbot, description)
+                    res_0 = solution_evaluation(code, test_set)
+                except Exception as e:
+                    print(e, flush=True)
+                    continue
             res = {
                 'name': problem['name'],
                 'description': description,
@@ -344,21 +364,31 @@ def experiment_3():
 
         print('generating code for rephrased description', flush=True)
         res_list_1 = []
-        while True:
-            if len(res_list_1) >= 5:
-                break
+        description_rephrase = ''
+        while description_rephrase == '':
             try:
                 description_rephrase = chatGPT_rephrase_2(chatbot, problem['description'])
             except Exception as e:
                 print(e, flush=True)
                 continue
-            try:
-                code_rephrase = chatGPT_code_2(chatbot, description_rephrase)
-                res_1 = solution_evaluation(code_rephrase, test_set)
+        while True:
+            if len(res_list_1) >= 5:
+                break
+            if len(res_list_1) == 0:
+                try:
+                    code_rephrase = chatGPT_code_2(chatbot, description_rephrase)
+                    res_1 = solution_evaluation(code_rephrase, test_set)
+                except Exception as e:
+                    print(e, flush=True)
+                    continue
+            else:
+                try:
+                    code_rephrase = chatGPT_code_diff(chatbot, description_rephrase)
+                    res_1 = solution_evaluation(code_rephrase, test_set)
 
-            except Exception as e:
-                print(e, flush=True)
-                continue
+                except Exception as e:
+                    print(e, flush=True)
+                    continue
             res = {
                 'name': problem['name'],
                 'rephrased_description': description_rephrase,
