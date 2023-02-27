@@ -6,12 +6,12 @@
 Reverse Engineered ChatGPT API by OpenAI. Extensible for chatbots etc.
 
 > ## Support my work
-> Make a pull request and fix my bad code. <br>
-> or <br>
-> <a href="https://www.buymeacoffee.com/acheong08" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-black.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+> Make a pull request and fix my bad code.
 
 # V1 Standard ChatGPT
 > ## Update 2023/02/14 9:00 PM GMT+8: It is working. Use this.
+
+> Rate limit: 120 requests per minute
 
 ## Installation
 `pip3 install revChatGPT`
