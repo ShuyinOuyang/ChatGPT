@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name="revChatGPT",
-    version="2.3.14",
+    version="2.3.16",
     license="GNU General Public License v2.0",
     author="Antonio Cheong",
     author_email="acheong@student.dalat.org",
@@ -17,6 +17,7 @@ setup(
         "requests[socks]",
         "asyncio",
         "httpx[socks]",
+        "prompt-toolkit",
     ],
     extras_require={
         "unofficial": [

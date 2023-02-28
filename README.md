@@ -11,7 +11,11 @@ Reverse Engineered ChatGPT API by OpenAI. Extensible for chatbots etc.
 # V1 Standard ChatGPT
 > ## Update 2023/02/14 9:00 PM GMT+8: It is working. Use this.
 
-> Rate limit: 120 requests per minute
+> Proxy server Rate limit: 25 requests per 10 seconds (per IP)
+> 
+> OpenAI rate limit: 50 requests per hour on free accounts. You can get around it with multi-account cycling
+> 
+> Plus accounts has around 150 requests per hour rate limit
 
 ## Installation
 `pip3 install revChatGPT`
@@ -67,12 +71,19 @@ https://chat.openai.com/api/auth/session
 `python3 -m revChatGPT.V1`
 
 ```
-!help - Show this message
-!reset - Forget the current conversation
-!config - Show the current configuration
-!rollback x - Rollback the conversation (x being the number of messages to rollback)
-!exit - Exit this program
+        ChatGPT - A command-line interface to OpenAI's ChatGPT (https://chat.openai.com/chat)
+        Repo: github.com/acheong08/ChatGPT
+
+Type '!help' to show a full list of commands
+
+Logging in...
+
+You:
+(Press Esc followed by Enter to finish)
 ```
+
+The command line interface supports multi-line inputs and allows navigation using arrow keys. Besides, you can also edit history inputs by arrow keys when the prompt is empty. It also completes your input if it finds matched previous prompts. To finish input, press `Esc` and then `Enter` as solely `Enter` itself is used for creating new line in multi-line mode.
+
 
 ### Developer API
 
@@ -132,7 +143,7 @@ If you have a cool project you want added to the list, open an issue.
 
 # Disclaimers
 
-This is not an official OpenAI product. This is a personal project and is not affiliated with OpenAI in any way. Don't sue me
+This is not an official OpenAI product. This is a personal project and is not affiliated with OpenAI in any way. Don't sue me.
 
 # Credits
 

@@ -19,6 +19,8 @@ from httpx import AsyncClient
 from OpenAIAuth import Authenticator
 from OpenAIAuth import Error as AuthError
 
+from .utils import get_input, create_session
+
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s",
 )
@@ -129,7 +131,7 @@ class Chatbot:
         """
         user_home = getenv("HOME")
         if user_home is None:
-            self.cache_path = ".chatgpt_cache.json"
+            self.cache_path = osp.join(os.getcwd(),".chatgpt_cache.json")
         else:
             # mkdir ~/.config/revChatGPT
             if not osp.exists(osp.join(user_home, ".config")):
@@ -300,7 +302,8 @@ class Chatbot:
                 "access_tokens":{"someone@example.com": 'this account's access token', }
             }
         """
-        os.makedirs(osp.dirname(self.cache_path), exist_ok=True)
+        dirname = osp.dirname(self.cache_path) or "."
+        os.makedirs(dirname, exist_ok=True)
         json.dump(info, open(self.cache_path, "w", encoding="utf-8"), indent=4)
 
     @logger(is_timed=False)
@@ -391,7 +394,7 @@ class Chatbot:
                         self.conversation_mapping[conversation_id] = history[
                             "current_node"
                         ]
-                    except Exception as error:
+                    except Exception:
                         pass
                 else:
                     log.debug(
@@ -822,25 +825,7 @@ class AsyncChatbot(Chatbot):
         response.raise_for_status()
 
 
-@logger(is_timed=False)
-def get_input(prompt):
-    """
-    Multiline input function.
-    """
-
-    print(prompt, end="")
-
-    lines = []
-
-    while True:
-        line = input()
-        if line == "":
-            break
-        lines.append(line)
-
-    user_input = "\n".join(lines)
-
-    return user_input
+get_input = logger(is_timed=False)(get_input)
 
 
 @logger(is_timed=False)
@@ -924,12 +909,13 @@ def main(config: dict):
             return False
         return True
 
+    session = create_session()
     while True:
-        prompt = get_input("\nYou:\n")
+        prompt = get_input("\nYou:\n", session=session)
         if prompt.startswith("!"):
             if handle_commands(prompt):
                 continue
-
+        print()
         print("Chatbot: ")
         prev_text = ""
         for data in chatbot.ask(prompt):
@@ -947,5 +933,4 @@ if __name__ == "__main__":
         """,
     )
     print("Type '!help' to show a full list of commands")
-    print("Press enter TWICE to submit your question.\n")
     main(configure())
