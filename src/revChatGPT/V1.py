@@ -19,7 +19,7 @@ from httpx import AsyncClient
 from OpenAIAuth import Authenticator
 from OpenAIAuth import Error as AuthError
 
-from .utils import get_input, create_session
+from utils import get_input, create_session
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s",
